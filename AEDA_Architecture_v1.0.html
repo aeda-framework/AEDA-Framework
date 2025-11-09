@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEDA v1.0 Architecture - 8-Layer Framework</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .architecture {
+            position: relative;
+            padding: 40px 0;
+        }
+        
+        .layer {
+            position: relative;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-width: 900px;
+        }
+        
+        .layer:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .layer-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            opacity: 0.3;
+        }
+        
+        .layer-name {
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+        
+        .layer-component {
+            font-size: 1.1em;
+            color: #555;
+            margin-top: 5px;
+        }
+        
+        .layer-function {
+            margin-top: 10px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .layer-output {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .new-badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.7em;
+            font-weight: bold;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Layer colors */
+        .layer-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .layer-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+        .layer-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+        .layer-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; }
+        .layer-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+        .layer-6 { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; }
+        .layer-7 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333; }
+        .layer-8 { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); color: #333; }
+        .layer-monitor { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); color: #333; }
+        
+        .arrow {
+            text-align: center;
+            font-size: 2em;
+            color: #3498db;
+            margin: 10px 0;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .feedback-loop {
+            position: relative;
+            margin: 30px auto;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 700px;
+        }
+        
+        .feedback-loop::before,
+        .feedback-loop::after {
+            content: '↺';
+            font-size: 3em;
+            color: #3498db;
+        }
+        
+        .legend {
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+        
+        .legend h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .legend-icon {
+            min-width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .legend-text {
+            flex: 1;
+        }
+        
+        .legend-text strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ecf0f1;
+            color: #7f8c8d;
+        }
+        
+        .input-output {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            gap: 20px;
+        }
+        
+        .input-box, .output-box {
+            flex: 1;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .input-box {
+            background: #3498db;
+            color: white;
+        }
+        
+        .output-box {
+            background: #2ecc71;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AEDA Framework <span class="version-badge">v1.0</span></h1>
+        <p class="subtitle">Adaptive Ethical Design Architecture - 8-Layer Modular System</p>
+        
+        <div class="input-output">
+            <div class="input-box">
+                📥 INPUT<br>
+                <small>Environment / Query</small>
+            </div>
+            <div class="output-box">
+                📤 ACTION<br>
+                <small>Ethically Aligned Decision</small>
+            </div>
+        </div>
+        
+        <div class="architecture">
+            <div class="layer layer-1">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">1. Perception Layer</div>
+                        <div class="layer-component">Signal Modulator (Ψ)</div>
+                    </div>
+                    <div class="layer-number">Ψ</div>
+                </div>
+                <div class="layer-function">
+                    Captures and normalizes sensory inputs from the environment. Transforms raw data into standardized state vectors.
+                </div>
+                <div class="layer-output">Output: S(t) - Normalized state vector</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="layer layer-2">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">2. Memory Layer</div>
+                        <div class="layer-component">Temporal Operator (Θ)</div>
+                    </div>
+                    <div class="layer-number">Θ</div>
+                </div>
+                <div class="layer-function">
+                    Integrates historical context with exponential decay. Maintains weighted trace of past states and decisions.
+                </div>
+                <div class="layer-output">Output: T(t) - Temporal context with precedents</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="layer layer-3">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">3. Systemic Context Layer <span class="new-badge">NEW</span></div>
+                        <div class="layer-component">Systemic Coherence Operator (Φ)</div>
+                    </div>
+                    <div class="layer-number">Φ</div>
+                </div>
+                <div class="layer-function">
+                    Evaluates alignment with extended system (all affected agents, stakeholders). Prevents local optimization that harms global welfare.
+                </div>
+                <div class="layer-output">Output: Φ(a,t) - Multi-agent coherence score</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="layer layer-4">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">4. Safety Layer</div>
+                        <div class="layer-component">Safe-State Threshold Filter (SSTF)</div>
+                    </div>
+                    <div class="layer-number">SSTF</div>
+                </div>
+                <div class="layer-function">
+                    Classifies actions across three dimensions: Irreversibility (R), Harm potential (H), Uncertainty (U). Blocks DANGEROUS actions pre-execution.
+                </div>
+                <div class="layer-output">Output: M(t) - Safety classification {SAFE, UNCERTAIN, DANGEROUS}</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="layer layer-5">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">5. Adaptation Layer</div>
+                        <div class="layer-component">Differential Engine (Δ)</div>
+                    </div>
+                    <div class="layer-number">Δ</div>
+                </div>
+                <div class="layer-function">
+                    Computes behavioral adjustment gradients based on feedback. Enables learning while respecting constraints.
+                </div>
+                <div class="layer-output">Output: ∇A(t) - Adjustment drift vector</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="layer layer-6">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">6. Orientation Layer</div>
+                        <div class="layer-component">Asymptotic Ethical Orientation (AEO)</div>
+                    </div>
+                    <div class="layer-number">AEO</div>
+                </div>
+                <div class="layer-function">
+                    Maintains stable ethical direction across contexts. Projects decisions toward ethical attractor without rigid convergence.
+                </div>
+                <div class="layer-output">Output: η(t) - Ethical direction vector</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="layer layer-7">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">7. Decision Layer</div>
+                        <div class="layer-component">Ethical Valuation Matrix (EVM)</div>
+                    </div>
+                    <div class="layer-number">EVM</div>
+                </div>
+                <div class="layer-function">
+                    Multi-criteria weighted selection among safe options. Balances competing ethical principles with context-aware priorities.
+                </div>
+                <div class="layer-output">Output: a*(t) - Optimal action candidate</div>
+            </div>
+            
+            <div class="arrow">↓</div>
+            
+            <div class="layer layer-8">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">8. Systemic Gate Layer <span class="new-badge">NEW</span></div>
+                        <div class="layer-component">Systemic Health Gate (Ω)</div>
+                    </div>
+                    <div class="layer-number">Ω</div>
+                </div>
+                <div class="layer-function">
+                    Circuit breaker that vetoes actions when system-wide health metrics fall below critical thresholds. Monitors: resources, agent well-being, complexity, stability.
+                </div>
+                <div class="layer-output">Output: {ALLOW, VETO} - Final authorization</div>
+            </div>
+            
+            <div class="feedback-loop">
+                <strong>Continuous Feedback Loop</strong><br>
+                All layers receive feedback from action outcomes to enable adaptive learning
+            </div>
+            
+            <div class="layer layer-monitor">
+                <div class="layer-header">
+                    <div>
+                        <div class="layer-name">Turbulence Monitor <span class="new-badge">NEW</span></div>
+                        <div class="layer-component">Turbulence Index (T)</div>
+                    </div>
+                    <div class="layer-number">T</div>
+                </div>
+                <div class="layer-function">
+                    Real-time ethical drift detection by measuring divergence between intended direction η(t) and chosen action a*(t).
+                </div>
+                <div class="layer-output">Output: T(t) = ||η(t) - a*(t)|| ∈ [0, 1]<br>
+                    T < 0.2: Low turbulence ✓ | 0.2 ≤ T < 0.5: Moderate ⚠️ | T ≥ 0.5: High 🚨
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend">
+            <h3>🆕 Key Innovations in v1.0</h3>
+            
+            <div class="legend-item">
+                <div class="legend-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">Φ</div>
+                <div class="legend-text">
+                    <strong>Systemic Coherence Operator (Φ)</strong>
+                    Evaluates multi-agent alignment before action execution. Prevents local optimization that harms global welfare. Formula: Φ(a,t) = ∫ [alignment(a, agent_i) × influence(agent_i)] dΩ
+                </div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-icon" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">Ω</div>
+                <div class="legend-text">
+                    <strong>Systemic Health Gate (Ω)</strong>
+                    Circuit breaker monitors system-wide health (resources, stability, agent well-being, complexity). Vetoes actions when ANY metric falls below critical threshold, even if action is locally optimal.
+                </div>
+            </div>
+            
+            <div class="legend-item">
+                <div class="legend-icon" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">T</div>
+                <div class="legend-text">
+                    <strong>Turbulence Index (T)</strong>
+                    Real-time metric for ethical drift detection. Measures divergence between intended ethical direction and actual chosen action. Enables monitoring dashboards, historical audits, and automatic alerts.
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><strong>AEDA Framework v1.0</strong> - Adaptive Ethical Design Architecture</p>
+            <p>An 8-layer modular framework for systemic AI alignment</p>
+            <p style="margin-top: 10px;">License: CC0 1.0 Universal (Public Domain) | November 2025</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">
+                📧 aeda.framework@proton.me | 
+                🔗 <a href="https://github.com/[YOUR-USERNAME]/AEDA-Framework" style="color: #3498db;">GitHub Repository</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
